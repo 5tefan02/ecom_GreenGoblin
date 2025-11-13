@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --page-background: #f8fafc;
+  --page-foreground: #0f172a;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--page-background);
+  color: var(--page-foreground);
+  font-family: var(--font-geist-sans), "Inter", "Segoe UI", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
