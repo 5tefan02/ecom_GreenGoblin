@@ -38,49 +38,6 @@ export default async function FigurinesPage() {
   return (
     <div className="space-y-16 pb-24 pt-12">
       <section className="mx-auto w-full max-w-6xl px-4">
-        <div className="overflow-hidden rounded-[32px] border border-violet-100 bg-gradient-to-br from-indigo-950 via-violet-800 to-fuchsia-600 text-white shadow-xl">
-          <div className="grid gap-10 px-10 py-14 md:grid-cols-[1.1fr,0.9fr] md:px-16">
-            <div className="space-y-5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white/80">
-                Colecție Figurines
-              </span>
-              <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
-                Figurine GreenGoblin modelate cu atenție pentru colecționari exigenți
-              </h1>
-              <p className="text-sm text-white/80">
-                Sculpturi, busturi și scene dinamice ajung direct din baza noastră de produse.
-                Toate piesele sunt prezentate cu descrieri detaliate, prețuri actualizate și imagini
-                clare pentru un preview corect al produsului final.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/comics"
-                  className="rounded-full bg-white/10 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-white/20"
-                >
-                  Explorează comics
-                </Link>
-                <Link
-                  href="/contact"
-                  className="rounded-full border border-white/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white hover:bg-white/10"
-                >
-                  Cere detalii
-                </Link>
-              </div>
-            </div>
-            <div className="relative hidden min-h-[280px] rounded-3xl bg-violet-900/30 md:block">
-              <Image
-                src="/hero_icon.png"
-                alt="Figurină GreenGoblin"
-                fill
-                className="object-contain p-8"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-6xl px-4">
         <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-3xl font-semibold text-emerald-950">

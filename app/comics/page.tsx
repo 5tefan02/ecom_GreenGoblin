@@ -37,48 +37,6 @@ export default async function ComicsPage() {
 
   return (
     <div className="space-y-16 pb-24 pt-12">
-      <section className="mx-auto w-full max-w-6xl px-4">
-        <div className="overflow-hidden rounded-[32px] border border-emerald-100 bg-gradient-to-br from-emerald-950 via-emerald-800 to-emerald-600 text-white shadow-xl">
-          <div className="grid gap-10 px-10 py-14 md:grid-cols-[1.2fr,0.8fr] md:px-16">
-            <div className="space-y-5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-white/80">
-                Colecție Comics
-              </span>
-              <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
-                Benzile desenate GreenGoblin, direct din baza noastră de produse
-              </h1>
-              <p className="text-sm text-white/80">
-                Selectăm cele mai bune volume pentru a evidenția evoluția eroului și
-                colaborările sale. Fiecare produs este sincronizat cu baza de date, astfel
-                încât să vezi disponibilitatea reală și cele mai noi lansări.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/figurines"
-                  className="rounded-full bg-white/10 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-white/20"
-                >
-                  Descoperă figurinele
-                </Link>
-                <Link
-                  href="/contact"
-                  className="rounded-full border border-white/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white hover:bg-white/10"
-                >
-                  Contactează-ne
-                </Link>
-              </div>
-            </div>
-            <div className="relative hidden min-h-[280px] rounded-3xl bg-emerald-900/30 md:block">
-              <Image
-                src="/absolute_superman_vol1.jpg"
-                alt="Copertă de comic GreenGoblin"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className="mx-auto w-full max-w-6xl px-4">
         <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">

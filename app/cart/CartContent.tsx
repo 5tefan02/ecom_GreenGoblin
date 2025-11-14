@@ -2,14 +2,45 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { useCart } from "@/app/context/cart";
 import { formatCurrency } from "@/lib/formatters";
+import { createOrderAction } from "./actions";
 
 export function CartContent() {
   const { items, removeItem, clearCart, total } = useCart();
+  const router = useRouter();
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showShippingForm, setShowShippingForm] = useState(false);
+  const [shippingData, setShippingData] = useState({
+    shippingName: "",
+    shippingAddress: "",
+    shippingCity: "",
+    shippingPostalCode: "",
+    shippingCountry: "România",
+    phone: "",
+    notes: "",
+  });
 
   const hasItems = items.length > 0;
+
+  useEffect(() => {
+    // Check if user is logged in
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setUser(data.data);
+        }
+      })
+      .catch(() => {
+        setUser(null);
+      });
+  }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4">
@@ -104,21 +135,229 @@ export function CartContent() {
             </div>
           </dl>
 
-          <p className="mt-6 text-xs text-emerald-900/70">
-            Stripe va fi integrat curând, dar poți finaliza o comandă demo pentru a simula
-            experiența completă.
-          </p>
+          {!showShippingForm ? (
+            <>
+              {!user ? (
+                <p className="mt-6 text-xs text-emerald-900/70">
+                  Trebuie să te autentifici pentru a plasa o comandă.
+                </p>
+              ) : (
+                <p className="mt-6 text-xs text-emerald-900/70">
+                  Completează informațiile de livrare pentru a finaliza comanda.
+                </p>
+              )}
 
-          <button
-            type="button"
-            onClick={() => {
-              clearCart();
-              alert("Bravo fane! Comanda a fost plasată. (demo)");
-            }}
-            className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-emerald-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-emerald-800"
-          >
-            Cumpără acum
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!user) {
+                    router.push("/login?callbackUrl=/cart");
+                    return;
+                  }
+                  setShowShippingForm(true);
+                }}
+                disabled={!hasItems || isLoading}
+                className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-emerald-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isLoading ? "Se procesează..." : "Cumpără acum"}
+              </button>
+            </>
+          ) : (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setIsLoading(true);
+                setError(null);
+
+                try {
+                  const orderItems = items.map((item) => ({
+                    productId: item.id,
+                    quantity: item.quantity,
+                    price: item.price,
+                  }));
+
+                  await createOrderAction({
+                    items: orderItems,
+                    ...shippingData,
+                  });
+
+                  clearCart();
+                  router.push("/account?order=success");
+                } catch (err) {
+                  setError(
+                    err instanceof Error
+                      ? err.message
+                      : "A apărut o eroare la plasarea comenzii.",
+                  );
+                  setIsLoading(false);
+                }
+              }}
+              className="mt-6 space-y-4"
+            >
+              {error && (
+                <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label
+                  htmlFor="shippingName"
+                  className="block text-xs font-semibold text-emerald-900"
+                >
+                  Nume complet *
+                </label>
+                <input
+                  id="shippingName"
+                  type="text"
+                  required
+                  value={shippingData.shippingName}
+                  onChange={(e) =>
+                    setShippingData({ ...shippingData, shippingName: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="shippingAddress"
+                  className="block text-xs font-semibold text-emerald-900"
+                >
+                  Adresă *
+                </label>
+                <input
+                  id="shippingAddress"
+                  type="text"
+                  required
+                  value={shippingData.shippingAddress}
+                  onChange={(e) =>
+                    setShippingData({ ...shippingData, shippingAddress: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="shippingCity"
+                    className="block text-xs font-semibold text-emerald-900"
+                  >
+                    Oraș *
+                  </label>
+                  <input
+                    id="shippingCity"
+                    type="text"
+                    required
+                    value={shippingData.shippingCity}
+                    onChange={(e) =>
+                      setShippingData({ ...shippingData, shippingCity: e.target.value })
+                    }
+                    className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="shippingPostalCode"
+                    className="block text-xs font-semibold text-emerald-900"
+                  >
+                    Cod poștal *
+                  </label>
+                  <input
+                    id="shippingPostalCode"
+                    type="text"
+                    required
+                    value={shippingData.shippingPostalCode}
+                    onChange={(e) =>
+                      setShippingData({
+                        ...shippingData,
+                        shippingPostalCode: e.target.value,
+                      })
+                    }
+                    className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="shippingCountry"
+                  className="block text-xs font-semibold text-emerald-900"
+                >
+                  Țară *
+                </label>
+                <input
+                  id="shippingCountry"
+                  type="text"
+                  required
+                  value={shippingData.shippingCountry}
+                  onChange={(e) =>
+                    setShippingData({ ...shippingData, shippingCountry: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="phone"
+                  className="block text-xs font-semibold text-emerald-900"
+                >
+                  Telefon
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={shippingData.phone}
+                  onChange={(e) =>
+                    setShippingData({ ...shippingData, phone: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="notes"
+                  className="block text-xs font-semibold text-emerald-900"
+                >
+                  Note (opțional)
+                </label>
+                <textarea
+                  id="notes"
+                  rows={2}
+                  value={shippingData.notes}
+                  onChange={(e) =>
+                    setShippingData({ ...shippingData, notes: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowShippingForm(false);
+                    setError(null);
+                  }}
+                  disabled={isLoading}
+                  className="flex-1 rounded-full border border-emerald-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-900 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-50"
+                >
+                  Anulează
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 rounded-full bg-emerald-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isLoading ? "Se procesează..." : "Plasează comanda"}
+                </button>
+              </div>
+            </form>
+          )}
         </aside>
       </div>
     </div>
