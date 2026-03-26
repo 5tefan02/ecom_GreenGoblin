@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GreenGoblin E-Commerce Platform
 
-## Getting Started
+## Project Overview
+GreenGoblin is a full-stack e-commerce web application built for browsing and purchasing comics and figurines. Developed with the latest Next.js 16 and React 19, it features a robust backend powered by Prisma ORM and MongoDB, complete with custom authentication, role-based access control, and secure image uploads.
 
-First, run the development server:
+## Key Features
 
+* **Product Catalog:** Browse products categorized into Comics and Figurines, featuring detailed views, pricing, and featured status.
+* **Order Management:** Complete checkout flow with order tracking capabilities (Pending, Processing, Shipped, Delivered) and detailed order item tracking.
+* **Authentication & Authorization:** Secure user registration and login using bcryptjs and jsonwebtoken, including role-based permissions (Admin vs User).
+* **Media Management:** Integrated file and image uploads using UploadThing.
+
+## Technology Stack
+
+* **Frontend:** Next.js 16.0.1, React 19.2.0, Tailwind CSS v4, TypeScript.
+* **Backend:** Next.js API Routes, Prisma ORM.
+* **Database:** MongoDB.
+* **Security & Auth:** bcryptjs, jsonwebtoken.
+* **Cloud Storage:** UploadThing.
+
+## Database Schema
+
+The MongoDB database is managed via Prisma and includes the following core models:
+* `User` / `Account` / `Session`: Handles user identities, credentials, and active sessions.
+* `Product`: Stores catalog items, image keys, prices, and categories.
+* `Order` / `OrderItem`: Manages user purchases, shipping information, and historical pricing snapshots.
+
+## Setup & Execution
+
+1. **Clone the repository:**
+```bash
+git clone <your-repo-url>
+cd greengoblin
+```
+
+2. **Install dependencies:**
+```bash
+npm install
+```
+
+3. **Environment Variables:**
+Create a `.env` file in the root directory and add the necessary tokens:
+```env
+DATABASE_URL="your_mongodb_connection_string"
+UPLOADTHING_SECRET="your_uploadthing_secret"
+UPLOADTHING_APP_ID="your_uploadthing_app_id"
+JWT_SECRET="your_jwt_secret"
+```
+
+4. **Database Setup:**
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+5. **Run the Development Server:**
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
